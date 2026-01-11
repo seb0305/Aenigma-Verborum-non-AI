@@ -187,64 +187,31 @@ document.getElementById("addVocabForm").onsubmit = async e => {
   const german = e.target.german.value.trim();
   if (!latin) return alert("Latin required");
 
-  const body = { latin_word: latin };
-  if (german) body.german_translation = german;
+  const body = {
+    latin_word: latin,
+    german_translation: german  // Immer senden!
+  };
 
-  const res  = await fetch(`${API_BASE}/vocab/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
-  });
-  const data = await res.json();
+  try {
+    const res = await fetch(`${API_BASE}/vocab/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
 
-  if (data.translations && data.translations.length) {
-    showTranslationButtons(
-      data.latin_word,
-      data.translations,
-      data.word_type,
-      data.flexion_type
-    );
-  } else {
+    if (!res.ok) {
+      const error = await res.json();
+      return alert(error.error || "Speichern fehlgeschlagen!");
+    }
+
+    const data = await res.json();
     e.target.reset();
-    loadVocab();
+    loadVocab();  // ✅ Immer refresh bei Erfolg!
+
+  } catch (err) {
+    alert("Netzwerkfehler: " + err.message);
   }
 };
-
-function showTranslationButtons(latin, translations, word_type, flexion_type) {
-  document.getElementById("addVocabForm").style.display = "none";
-  document.getElementById("translationOptions").style.display = "block";
-
-  const buttonsDiv = document.getElementById("transButtons");
-  buttonsDiv.innerHTML = translations
-    .map(
-      (trans, i) => `
-    <button class="trans-btn"
-      onclick="selectTranslation('${latin}', '${trans}', '${word_type}', '${flexion_type}')">
-      ${i + 1}. ${trans}
-    </button>
-  `
-    )
-    .join("<br>");
-}
-
-async function selectTranslation(latin, german, word_type, flexion_type) {
-  await fetch(`${API_BASE}/vocab/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      latin_word: latin,
-      german_translation: german,
-      word_type,
-      flexion_type
-    })
-  });
-
-  document.getElementById("translationOptions").style.display = "none";
-  const form = document.getElementById("addVocabForm");
-  form.style.display = "block";
-  form.reset();
-  loadVocab();
-}
 
 /* -------------------- Multiple Choice Quiz -------------------- */
 
