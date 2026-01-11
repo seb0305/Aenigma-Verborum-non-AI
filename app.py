@@ -19,7 +19,14 @@ def create_app():
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
-    CORS(app)  # allow local frontend to call API
+    # CORS für ALLE API + Frontend
+    CORS(app, resources={
+        r"/*": {
+            "origins": "*",  # Oder ["https://aenigma-verborum-non-ai.onrender.com"]
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type"]
+        }
+    })
 
     # adds blueprints whose routes map directly to common operations on SQLite tables
     app.register_blueprint(vocab_bp, url_prefix="/api/vocab")
