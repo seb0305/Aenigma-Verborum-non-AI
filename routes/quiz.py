@@ -13,6 +13,38 @@ from models import VocabEntry, QuizRound, QuizAnswer, Card, UserCard
 
 logger = logging.getLogger(__name__)
 
+WRONG_TRANSLATIONS = [
+    # VERBEN (~170)
+    "laufen", "sehen", "hören", "sprechen", "essen", "trinken", "schlafen", "arbeiten", "spielen", "lesen",
+    "schreiben", "denken", "wissen", "gehen", "kommen", "sein", "haben", "tun", "machen", "geben",
+    "nehmen", "finden", "verlieren", "lieben", "hassen", "helfen", "fragen", "antworten", "erzählen", "sagen",
+    "rufen", "schreien", "flüstern", "tanzen", "springen", "sitzen", "stehen", "fallen", "steigen", "sinken",
+    "öffnen", "schließen", "beginnen", "enden", "warten", "suchen", "verstecken", "zeigen", "verbergen", "tragen",
+    "werfen", "fangen", "schneiden", "nähen", "kaufen", "verkaufen", "zahlen", "zählen", "rechnen", "erklären",
+    "verstehen", "vergessen", "erinnern", "wünschen", "hoffen", "fürchten", "wagen", "versuchen", "gelingen", "scheitern",
+    "regnen", "schneien", "wehen", "leuchten", "brennen", "erhitzen", "kühlen", "wachsen", "blühen", "welken",
+    "leben", "sterben", "atmen", "schlagen", "fühlen", "riechen", " schmecken", "berühren", "greifen", "halten",
+
+    # NOMEN (~200)
+    "Haus", "Tür", "Fenster", "Tisch", "Stuhl", "Bett", "Buch", "Stift", "Papier", "Lampe",
+    "Straße", "Stadt", "Land", "Welt", "Himmel", "Erde", "Wasser", "Feuer", "Luft", "Licht",
+    "Nacht", "Tag", "Morgen", "Abend", "Sonne", "Mond", "Stern", "Baum", "Blatt", "Blume",
+    "Mädchen", "Junge", "Mann", "Frau", "Kind", "Mutter", "Vater", "Freund", "Feind", "Lehrer",
+    "Schüler", "Arzt", "Kranke", "König", "Held", "Heldin", "Schwert", "Schild", "Pferd", "Weg",
+    "Wald", "Fluss", "Berg", "Tal", "See", "Meer", "Schiff", "Boot", "Fisch", "Vogel",
+    "Wolke", "Regen", "Schnee", "Wind", "Sturm", "Frieden", "Krieg", "Liebe", "Hass", "Freude",
+    "Trauer", "Angst", "Mut", "Zeit", "Jahr", "Monat", "Woche", "Tag", "Stunde", "Minuten",
+
+    # ADJEKTIVE (~130)
+    "groß", "klein", "hoch", "niedrig", "lang", "kurz", "breit", "schmal", "neu", "alt",
+    "jung", "reif", "schön", "hässlich", "gut", "schlecht", "stark", "schwach", "schnell", "langsam",
+    "warm", "kalt", "heiß", "kühl", "hell", "dunkel", "klar", "trüb", "reich", "arm",
+    "klug", "dumm", "freundlich", "böse", "froh", "traurig", "mutig", "feige", "edel", "gemein",
+    "einfach", "schwer", "leicht", "hart", "weich", "glatt", "rau", "sauber", "schmutzig", "gesund",
+    "krank", "tot", "lebendig", "leer", "voll", "nah", "fern", "oben", "unten", "links",
+    "rechts", "vor", "nach", "innen", "außen", "erste", "letzte", "ganze", "halbe", "viele",
+    "wenige", "alle", "kein", "einzeln", "gemeinsam", "öffentlich", "geheim", "wahr", "falsch", "möglich"
+]
 
 def normalize_german_strict(s: str) -> str:
     s = s.strip().lower()
@@ -96,11 +128,8 @@ def next_questions():
 
     # After loop, ensure we have a list of strings in wrong_options_raw (possibly filtered)
     if not wrong_options_raw:
-        wrong_options_raw = [
-            "Falsche Übersetzung 1",
-            "Falsche Übersetzung 2",
-            "Falsche Übersetzung 3",
-        ]
+        # 3 zufällige echte deutsche Wörter!
+        wrong_options_raw = random.sample(WRONG_TRANSLATIONS, 3)
 
     # Final filtering & padding to exactly 3
     final_filtered = []
