@@ -54,62 +54,32 @@ def add_vocab():
     if VocabEntry.query.filter_by(user_id=user_id, latin_word=latin).first():
         return jsonify({"error": "Latin word already exists"}), 409
 
-    # Save if german provided
-    if german and german.strip():
-        # Auto classify
-        try:
-            word_type = frag_caesar_crawl4ai.get_word_type(latin)
-            flexion_type = frag_caesar_crawl4ai.get_flexion_type(latin) if word_type == "Verb" or word_type == "Nomen" else None
-        except:
-            word_type, flexion_type = "unknown", None
-
-        entry = VocabEntry(
-            user_id=user_id, latin_word=latin, german_translation=german,
-            word_type=word_type, flexion_type=flexion_type
-        )
-        db.session.add(entry)
-        db.session.commit()
-        return jsonify({"id": entry.id}), 201
-
-        # Auto word_type
-        word_type = frag_caesar_crawl4ai.get_word_type(latin)
-        flexion_type = frag_caesar_crawl4ai.get_flexion_type(latin) if word_type == "Verb" or word_type == "Nomen" else None
-
-        return jsonify({
-            "latin_word": latin,
-            "word_type": word_type,
-            "flexion_type": flexion_type,
-            "translations": translations
-        }), 200
-
-    """
-    if not german:
-        # TODO: In later stage, call AI here to propose translations.
-        # For now return suggestions so frontend can ask again.
-        return jsonify({
-            "need_translation_choice": True,
-            "suggestions": ["<AI-translation-1>", "<AI-translation-2>"]
-        }), 200
+    # Auto classify mit FragCaesar (FEHLER ABFANGEN!)
+    word_type = "Unbekannt"
+    flexion_type = None
 
     try:
         word_type = frag_caesar_crawl4ai.get_word_type(latin)
-        flexion_type = frag_caesar_crawl4ai.get_verb_flexion_type(latin) if word_type == "Verb" else None
-    except:
-        word_type, flexion_type = "unknown", None
+        flexion_type = frag_caesar_crawl4ai.get_flexion_type(latin) if word_type in ["Verb", "Nomen"] else None
+    except Exception as e:
+        current_app.logger.error(f"FragCaesar failed for '{latin}': {e}")
+        return jsonify({
+            "error": f"Word-Klassifikation fehlgeschlagen für '{latin}'. Manuell bearbeiten.",
+            "latin_word": latin
+        }), 400
 
+    # Speichern
     entry = VocabEntry(
         user_id=user_id,
         latin_word=latin,
         german_translation=german,
-        word_type=word_type,
-        flexion_type=flexion_type,
+        word_type=word_type,  # ✅ Immer STRING!
+        flexion_type=flexion_type
     )
     db.session.add(entry)
     db.session.commit()
 
-    return jsonify({"id": entry.id}), 201
-    """
-
+    return jsonify({"id": entry.id, "word_type": word_type}), 201
 
 
 @vocab_bp.put("/<int:entry_id>")
