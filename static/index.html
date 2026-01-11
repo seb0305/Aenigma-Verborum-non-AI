@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Aenigma prototype</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h1>Aenigma Prototype</h1>
+
+  <button id="btnHomeVocab" class="nav-btn">My Vocab Book</button>
+  <button id="btnHomeQuiz" class="nav-btn">Start Multiple Choice Quiz</button>
+  <button id="btnHomeSorting" class="nav-btn">Start Verb Sorting Quiz</button>
+  <button id="btnHomeNounSorting" class="nav-btn">Start Noun Sorting Quiz</button>
+  <button id="btnHomeCards" class="nav-btn">My Cards</button>
+
+  <section id="vocabSection" style="display:none;">
+    <h2>Vocab Book</h2>
+
+
+    <form id="addVocabForm">
+      <input name="latin" placeholder="Latin" required>
+      <input name="german" placeholder="German (optional)">
+      <button type="submit">Add</button>
+    </form>
+    <div id="translationOptions" style="display:none; margin-top:1rem;">
+  <h4>Pick German meaning:</h4>
+  <div id="transButtons"></div>
+</div>
+
+<table id="vocabTable">
+  <thead>
+    <tr>
+      <th data-col="latin_word" class="sortable">Latin <span class="sort-arrow">▽</span></th>
+      <th data-col="german_translation" class="sortable">German <span class="sort-arrow">▽</span></th>
+      <th data-col="word_type" class="sortable">Type <span class="sort-arrow">▽</span></th>
+      <th data-col="accuracy_percent" class="sortable">Accuracy <span class="sort-arrow">▽</span></th>
+      <th>Card</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+<div class="filter-sidebar">
+  <h3>Type Filter</h3>
+  <label><input type="radio" name="typeFilter" value="all" class="type-radio" checked> All</label><br>
+  <label><input type="radio" name="typeFilter" value="nomen" class="type-radio"> Nomen</label><br>
+  <label><input type="radio" name="typeFilter" value="verb" class="type-radio"> Verb</label><br>
+  <label><input type="radio" name="typeFilter" value="adjektiv" class="type-radio"> Adjektiv</label>
+</div>
+
+  </section>
+
+<section id="quizSection" class="panel">
+  <h2>Vocab Multiple Choice Quiz <span id="mcCounter" style="color: violet; font-weight: bold;">–</span></h2>
+  <div id="quizWord" class="quiz-latin"></div></div>
+  <div id="quizOptions"></div>
+  <div id="quizFeedback"></div>
+  <button id="btnNextQuestion" class="next-btn" style="display:none;">Nächstes Wort</button>
+</section>
+
+<section id="sortingSection" style="display:none;" class="panel">
+  <h2>Verb Sorting Quiz <span id="sortingCounter" style="color: violet; font-weight: bold;">–</span></h2>
+  <div id="sortingQuizArea" class="sorting-area">
+    <!-- Draggable Verb Card -->
+    <div id="verbCard" class="verb-card" draggable="true">
+      Loading...
+    </div>
+
+    <!-- Drop Categories -->
+    <div id="categories" class="categories-container">
+      <div class="category-box" data-category="A-Konjugation">A-Konjugation</div>
+      <div class="category-box" data-category="E-Konjugation">E-Konjugation</div>
+      <div class="category-box" data-category="I-Konjugation">I-Konjugation</div>
+      <div class="category-box" data-category="konsonantische Konjugation">konsonantische Konjugation</div>
+    </div>
+
+    <!-- Feedback -->
+    <div id="sortingFeedback" class="feedback"></div>
+    <button id="btnNextVerb" class="next-btn" style="display:none;">Nächstes Verb</button>
+  </div>
+</section>
+
+<section id="nounsSection" style="display:none;" class="panel">
+  <h2>Noun Sorting Quiz <span id="nounsCounter" style="color: violet; font-weight: bold;">–</span></h2>
+  <div id="nounsQuizArea" class="sorting-area">
+    <div id="nounCard" class="verb-card" draggable="true">Loading...</div>  <!-- nounCard -->
+    <div id="nounCategories">
+      <div class="category-box" data-category="A-Deklination">A-Deklination</div>
+      <div class="category-box" data-category="O-Deklination">O-Deklination</div>
+      <div class="category-box" data-category="konsonantische Deklination">konsonantische Deklination</div>
+      <div class="category-box" data-category="E-Deklination">E-Deklination</div>
+      <div class="category-box" data-category="I-Deklination">I-Deklination</div>
+      <div class="category-box" data-category="U-Deklination">U-Deklination</div>
+      <div class="category-box" data-category="gemischte Deklination">gemischte Deklination</div>
+    </div>
+    <div id="nounsFeedback" class="feedback"></div>
+    <button id="btnNextNoun" class="next-btn" style="display:none;">Nächstes Nomen</button>
+  </div>
+</section>
+
+
+  <section id="cardsSection" style="display:none;">
+    <h2>My Cards</h2>
+    <div id="cardsGrid"></div>
+  </section>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
