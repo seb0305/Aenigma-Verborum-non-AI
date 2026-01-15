@@ -46,6 +46,12 @@ def create_app():
         # ORM definitions turned into real SQLite tables before any API logic runs
         db.create_all()
 
+        # Auto-User für Demo
+        if not User.query.filter_by(id=1).first():
+            demo_user = User(id=1)
+            db.session.add(demo_user)
+            db.session.commit()
+            print("✅ Demo User 1 created")
     return app
 
 app = create_app()
