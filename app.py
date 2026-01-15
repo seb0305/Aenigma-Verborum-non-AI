@@ -44,14 +44,16 @@ def create_app():
 
     with app.app_context():
         # ORM definitions turned into real SQLite tables before any API logic runs
-        db.create_all()
-
-        # Auto-User für Demo
-        if not User.query.filter_by(id=1).first():
-            demo_user = User(id=1)
-            db.session.add(demo_user)
+        try:
+            db.create_all()
+            # ✅ Merge statt add() - updated existierenden User oder insert mit Defaults
+            demo_user = User(id=1, username='demo', password_hash='demo_hash')
+            db.session.merge(demo_user)
             db.session.commit()
-            print("✅ Demo User 1 created")
+            print("✅ Demo User 1 merged")
+        except Exception as e:
+            db.session.rollback()
+            print(f"❌ DB Error: {e}")
     return app
 
 app = create_app()
