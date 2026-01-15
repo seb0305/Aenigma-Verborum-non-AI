@@ -15,7 +15,16 @@ from routes.cards import cards_bp
 
 def create_app():
     app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///latin_vocab.db"
+
+    db_url = os.getenv('DATABASE_URL')  # Neon/Render!
+    if db_url and 'neon.tech' in db_url:
+        # Neon SSL + Format
+        uri = db_url.replace('postgresql://', 'postgresql://')  # Schon OK
+        app.config["SQLALCHEMY_DATABASE_URI"] = uri
+        print(f"✅ Neon Postgres: {uri.split('@')[1].split('/')[0]}")
+    else:
+        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///latin_vocab.db"
+
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
